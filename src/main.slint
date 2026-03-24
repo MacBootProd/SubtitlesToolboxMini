@@ -1,0 +1,176 @@
+import { Button, VerticalBox, LineEdit, ComboBox, GroupBox, HorizontalBox } from "std-widgets.slint";
+
+// Style pour un bouton bleu fixe
+component BlueButton inherits Rectangle {
+    in-out property <string> text;
+    callback clicked <=> touch.clicked;
+    
+    width: 150px;
+    height: 50px;
+    background: touch.pressed ? #0D47A1 : touch.has-hover ? #1565C0 : #3873d5;
+    border-radius: 4px;
+    
+    Text {
+        text: root.text;
+        color: white;
+        font-weight: 700;
+    }
+    
+    touch := TouchArea { mouse-cursor: pointer; }
+}
+
+export component AppWindow inherits Window {
+    title: "Subtitles Toolbox mini";
+    preferred-width: 550px; 
+    preferred-height: 850px;
+    background: #f5f5f5;
+    
+    // Callbacks vers Rust
+    callback process_clicked(string, string, string, string, string, string);
+    callback open_file1_clicked();
+    callback open_file2_clicked();
+
+    // Propriétés d'état
+    in-out property <string> status_text: "No file selected";
+    in-out property <string> file1_path: "";
+    in-out property <string> file2_path: "";
+    in-out property <string> file2_status: "No second file selected";
+    
+    // Propriété pour le message final (avec support du retour à la ligne)
+    in-out property <string> final_result_message: "";
+
+    // Propriétés de saisie
+    in-out property <string> offset_val: "0.0";
+    in-out property <string> resync_idx_a: "1";
+    in-out property <string> resync_time_a: "00:00:00,000";
+    in-out property <string> resync_idx_b: "1";
+    in-out property <string> resync_time_b: "00:00:00,000";
+
+    VerticalBox {
+        padding: 30px; spacing: 15px;
+        
+        Text { 
+            text: "Subtitles Toolbox mini"; 
+            font-size: 28px; 
+            font-weight: 800; 
+            horizontal-alignment: center; 
+            color: #3873d5; 
+        }
+
+        GroupBox {
+            title: "Files Selection";
+            VerticalBox {
+                spacing: 10px;
+                // Bouton Charger Fichier 1 (Largeur fixe 150px)
+                HorizontalBox {
+                    alignment: center;
+                    Button { 
+                        text: "📁 Load File"; 
+                        width: 150px;
+                        clicked => { root.open_file1_clicked() } 
+                    }
+                }
+                
+                Text { 
+                    text: root.status_text; 
+                    horizontal-alignment: center; 
+                    // Rouge si vide, Vert si chargé
+                    color: root.file1_path == "" ? #d32f2f : #388e3c; 
+                    font-size: 12px; 
+                }
+                
+                // Section conditionnelle pour le Merge
+                if (mode_selector.current-value == "Merge 2 files") : VerticalBox {
+                    spacing: 10px;
+                    HorizontalBox {
+                        alignment: center;
+                        Button { 
+                            text: "🔗 Load Second File"; 
+                            width: 150px;
+                            clicked => { root.open_file2_clicked() } 
+                        }
+                    }
+                    Text { 
+                        text: root.file2_status; 
+                        horizontal-alignment: center; 
+                        // Rouge si vide, Bleu #1976D2 si chargé
+                        color: root.file2_path == "" ? #d32f2f : #388e3c; 
+                        font-size: 12px; 
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "Functions";
+            VerticalBox {
+                spacing: 10px;
+                Text { text: "Select Function:"; font-weight: 700; }
+                mode_selector := ComboBox {
+                    model: ["Shift", "Re-synch", "Repair index", "Merge 2 files"];
+                    current-value: "Shift";
+                }
+                
+                if (mode_selector.current-value == "Shift") : VerticalBox {
+                    Text { text: "This will shift all subtitles (seconds):"; font-italic: true; }
+                    LineEdit { text <=> root.offset_val; }
+                }
+
+                if (mode_selector.current-value == "Re-synch") : VerticalBox {
+                    spacing: 10px;
+                    Text { text: "Target point A (Subtitle: Number & Time):"; font-weight: 600; }
+                    HorizontalBox {
+                        LineEdit { text <=> root.resync_idx_a; width: 60px; }
+                        LineEdit { text <=> root.resync_time_a; }
+                    }
+                    Text { text: "Target point B (Subtitle: Number & Time):"; font-weight: 600; }
+                    HorizontalBox {
+                        LineEdit { text <=> root.resync_idx_b; width: 60px; }
+                        LineEdit { text <=> root.resync_time_b; }
+                    }
+                }
+                
+                if (mode_selector.current-value == "Repair index") : Text {
+                    text: "This will re-index all subtitles numbers from 1 to N"; 
+                    font-italic: true;
+                }
+
+                if (mode_selector.current-value == "Merge 2 files") : Text {
+                    text: "This will add all subtitles from file 2 after last subtitle of file 1"; 
+                    font-italic: true;
+                }
+            }
+        }
+
+        Rectangle {} // Espaceur flexible
+
+        // Bouton bleu EXECUTE (Largeur fixe 150px)
+        HorizontalBox {
+            alignment: center;
+            BlueButton {
+                text: "EXECUTE ACTION"; 
+                clicked => { 
+                    root.final_result_message = "Processing...";
+                    root.process_clicked(
+                        root.offset_val, 
+                        mode_selector.current-value, 
+                        root.resync_time_a, 
+                        root.resync_time_b,
+                        root.resync_idx_a,
+                        root.resync_idx_b
+                    ) 
+                }
+            }
+        }
+
+        // Zone de résultat
+        Text {
+            text: root.final_result_message;
+            horizontal-alignment: center;
+            color: #388e3c;
+            font-weight: 700;
+            font-size: 14px;
+            wrap: word-wrap; // Permet le retour à la ligne
+        }
+    }
+}

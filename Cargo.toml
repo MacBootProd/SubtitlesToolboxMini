@@ -1,0 +1,14 @@
+[package]
+name = "SubtitlesToolboxMini"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+slint = "1.4.1"
+rfd = "0.12.1"
+tokio = { version = "1", features = ["full"] }
+encoding_rs = "0.8.33"
+
+[build-dependencies]
+slint-build = "1.4.1"
+winres = "0.1"
