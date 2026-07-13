@@ -1,0 +1,15 @@
+export global AppState {
+    // 1. Array of text strings for the languages
+    in-out property <[string]> available_languages;
+    in-out property <int> tmp_lang_index;
+    in-out property <int> s_lang_index;
+
+    // 2. Pure translation functions (Inchangées, elles sont parfaites)
+    public pure function get_save_success(filename: string) -> string { return @tr("✅ Saved as new file:\n{}", filename); }
+    public pure function get_cancelled() -> string { return @tr("❌ Cancelled"); }
+    public pure function get_error_load_first() -> string { return @tr("❌ Error: Load file first"); }
+    public pure function get_error_require_srt() -> string { return @tr("❌ Error: Please load an .srt file for this function"); }
+    public pure function get_extension_error(req_ext: string) -> string { return @tr("❌ Error: Please load a .{} file to convert it", req_ext); }
+    public pure function get_error_load_file2() -> string { return @tr("❌ Error: Load file 2"); }
+    public pure function get_vobsub_error() -> string { return @tr("❌ Error: VobSub (.sub/.idx) requires OCR and is not supported."); }
+}

@@ -1,0 +1,452 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: SubtitlesToolboxMini\n"
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# --- Subtitles Toolbox mini - FRENCH ---
+# --- SLINT only ---
+# --- MESSAGES ---
+msgctxt "AppWindow"
+msgid "No file selected"
+msgstr "Aucun fichier sélectionné"
+
+msgctxt "AppWindow"
+msgid "No second file selected"
+msgstr "Deuxième fichier non-sélectionné"
+
+msgctxt "AppWindow"
+msgid "File already exists"
+msgstr "Le fichier existe déjà"
+
+msgctxt "AppWindow"
+msgid "What would you like to do?"
+msgstr "Que voulez-vous faire ?"
+
+msgctxt "AppWindow"
+msgid "Processing..."
+msgstr "Processus en cours"
+
+# --- AppState - from state.slint ---
+msgctxt "AppState"
+msgid "✅ Saved as new file:\n{}"
+msgstr "✅ Enregistré en tant que nouveau fichier:\n{}"
+
+msgctxt "AppState"
+msgid "❌ Cancelled"
+msgstr "❌ Annulé"
+
+msgctxt "AppState"
+msgid "❌ Error: Load file first"
+msgstr "❌ Erreur : Chargez d'abord un fichier"
+
+msgctxt "AppState"
+msgid "❌ Error: Please load an .srt file for this function"
+msgstr "❌ Erreur : Veuillez charger un fichier .srt pour cette fonction"
+
+msgctxt "AppState"
+msgid "❌ Error: Please load a .{} file to convert it"
+msgstr "❌ Erreur : Veuillez charger un fichier .{} pour le convertir"
+
+msgctxt "AppState"
+msgid "❌ Error: Load file 2"
+msgstr "❌ Erreur : Chargez le fichier 2"
+
+msgctxt "AppState"
+msgid "❌ Error: VobSub (.sub/.idx) requires OCR and is not supported."
+msgstr "❌ Erreur : Le format VobSub (.sub/.idx) nécessite de l'OCR et n'est pas supporté."
+
+# --- BUTTONS ---
+msgctxt "AppWindow"
+msgid "EXECUTE ACTION"
+msgstr "EXECUTER ACTION"
+
+msgctxt "AppWindow"
+msgid "Overwrite"
+msgstr "Remplacer"
+
+msgctxt "AppWindow"
+msgid "Rename"
+msgstr "Renommer"
+
+msgctxt "AppWindow"
+msgid "Cancel"
+msgstr "Annuler"
+
+msgctxt "AppWindow"
+msgid "Apply"
+msgstr "Appliquer"
+
+msgctxt "AppWindow"
+msgid "Close"
+msgstr "Fermer"
+
+# --- INFORMATIONS WINDOW ---
+msgctxt "AppWindow"
+msgid "Informations"
+msgstr "Informations"
+
+msgctxt "AppWindow"
+msgid "SubtitlesToolboxMini on Github.com"
+msgstr "SubtitlesToolboxMini sur Github.com"
+
+# --- SETTINGS WINDOW ---
+msgctxt "AppWindow"
+msgid "Settings"
+msgstr "Réglages"
+
+msgctxt "AppWindow"
+msgid "Language:"
+msgstr "Langue :"
+
+msgctxt "AppWindow"
+msgid "Dark Mode"
+msgstr "Mode sombre"
+
+msgctxt "AppWindow"
+msgid "Shift default (SS.ms):"
+msgstr "Décalage par défaut (SS.ms) :"
+
+msgctxt "AppWindow"
+msgid "Merge gap (ms):"
+msgstr "Combiner avec l'interval (ms) :"
+
+msgctxt "AppWindow"
+msgid "Output Directory:"
+msgstr "Répertoire de sortie :"
+
+msgctxt "AppWindow"
+msgid "Same as File 1"
+msgstr "Identique au Fichier 1"
+
+msgctxt "AppWindow"
+msgid "Always ask"
+msgstr "Toujours demander"
+
+msgctxt "AppWindow"
+msgid "Custom:"
+msgstr "Personalisé"
+
+# --- TAB ---
+msgctxt "AppWindow"
+msgid "Functions"
+msgstr "Fonctions"
+
+msgctxt "AppWindow"
+msgid "Convert"
+msgstr "Convertir"
+
+msgctxt "AppWindow"
+msgid "Clean"
+msgstr "Nettoyer"
+
+# --- MAIN ---
+msgctxt "AppWindow"
+msgid "File Selection"
+msgstr "Sélection du fichier"
+
+msgctxt "AppWindow"
+msgid "📁 Load File"
+msgstr "📁 Charger le fichier"
+
+# --- FUNCTIONS TAB ---
+msgctxt "AppWindow"
+msgid "Shift"
+msgstr "Décalage"
+
+msgctxt "AppWindow"
+msgid "Re-sync"
+msgstr "Re-synchroniser"
+
+msgctxt "AppWindow"
+msgid "Change Framerate"
+msgstr "Changer IPS"
+
+msgctxt "AppWindow"
+msgid "Append 2 files"
+msgstr "Assembler 2 fichiers"
+
+msgctxt "AppWindow"
+msgid "Repair index"
+msgstr "Réparer l'index"
+
+msgctxt "AppWindow"
+msgid "Merge 2 files"
+msgstr "Combiner 2 fichiers"
+
+# --- FUNCTION - SHIFT ---
+msgctxt "AppWindow"
+msgid "Shift all subtitles timing (forward or backward)."
+msgstr "Décale le timing de tous les sous-titres (vers l'avant ou vers l'arrière)"
+
+msgctxt "AppWindow"
+msgid "Use HH:MM:SS format"
+msgstr "Utiliser le format HH:MM:SS"
+
+msgctxt "AppWindow"
+msgid "Enter HH:MM:SS,ms (positive or negative)"
+msgstr "Entrer HH:MM:SS,ms (positif ou négatif)"
+
+msgctxt "AppWindow"
+msgid "Enter seconds SS.ms (positive or negative)"
+msgstr "Entrer les secondes SS.ms (positif or négatif)"
+
+# --- FUNCTION - RE-SYNC ---
+msgctxt "AppWindow"
+msgid "Re-sync from point A to point B, preserving duration & avoiding overlaps."
+msgstr "Re-synchronise du point A au point B, en préservant la durée & évitant les chevauchements."
+
+msgctxt "AppWindow"
+msgid "Re-sync from point A to point B, preserving duration."
+msgstr "Re-synchronise du point A au point B, en préservant la durée."
+
+msgctxt "AppWindow"
+msgid "Linear re-sync from point A to point B, avoiding overlaps."
+msgstr "Re-synchronisation linéaire du point A au point B, en évitant les chevauchements."
+
+msgctxt "AppWindow"
+msgid "Linear re-sync from point A to point B."
+msgstr "Re-synchronisation linéaire du point A au point B."
+
+msgctxt "AppWindow"
+msgid "No overlap"
+msgstr "Évite les chevauchements"
+
+msgctxt "AppWindow"
+msgid "Keep duration"
+msgstr "Préserve la durée"
+
+msgctxt "AppWindow"
+msgid "Point A:"
+msgstr "Point A :"
+
+msgctxt "AppWindow"
+msgid "Point B:"
+msgstr "Point B :"
+
+# --- FUNCTION - CHANGE FRAMERATE ---
+msgctxt "AppWindow"
+msgid "Change all subtitles timing from\na source frame rate to a target frame rate."
+msgstr "Modifiez la synchronisation de tous les sous-titres en passant\nd'une fréquence d'images source à une fréquence d'images cible."
+
+msgctxt "AppWindow"
+msgid "Source FPS:"
+msgstr "IPS de la source :"
+
+msgctxt "AppWindow"
+msgid "Target FPS:"
+msgstr "IPS de la cible :"
+
+# --- FUNCTION - APPEND 2 FILES ---
+msgctxt "AppWindow"
+msgid "Append all subtitles from file 2 at the very end of file 1"
+msgstr "Ajoute tous les sous-titres du fichier 2 à la toute fin du fichier 1."
+
+msgctxt "AppWindow"
+msgid "🔗 Load File 2"
+msgstr "🔗 Charger le Fichier 2"
+
+msgctxt "AppWindow"
+msgid "Connect file 2 at (target Index & Timing):"
+msgstr "Connecter le fichier 2 à (cibler Index & Minutage) :"
+
+# --- FUNCTION - REPAIR INDEX --- 
+msgctxt "AppWindow"
+msgid "Re-index subtitles from 1 to N"
+msgstr "Ré-indexation des sous-titres de 1 à N"
+
+# --- FUNCTION - MERGE 2 FILES ---
+msgctxt "AppWindow"
+msgid "Merge file 1 with file 2, favoring {0} {1}"
+msgstr "Combiner le fichier 1 avec le fichier 2, en favorisant {0} {1}"
+
+msgctxt "AppWindow"
+msgid "file 1,"
+msgstr "fichier 1"
+
+msgctxt "AppWindow"
+msgid "file 2,"
+msgstr "fichier 2"
+
+msgctxt "AppWindow"
+msgid "\navoiding start overlap, with a tolerance gap of {0} ms."
+msgstr "\névitant le chevauchement du début, avec un écart de tolérence de {0} ms."
+
+msgctxt "AppWindow"
+msgid "\navoiding duration overlap, with a tolerance gap of {0} ms."
+msgstr "\névitant le chevauchement de durée, avec un écart de tolérence de {0} ms."
+
+msgctxt "AppWindow"
+msgid "Merge file 1 with file 2."
+msgstr "Combiner le fichier 1 avec le fichier 2."
+
+msgctxt "AppWindow"
+msgid "Simple merge"
+msgstr "Combination simple"
+
+msgctxt "AppWindow"
+msgid "Avoid start overlap"
+msgstr "Éviter le chevauchement du début"
+
+msgctxt "AppWindow"
+msgid "Avoid duration overlap"
+msgstr "Éviter le chevauchement de durée"
+
+msgctxt "AppWindow"
+msgid "Favor:"
+msgstr "Favoriser :"
+
+msgctxt "AppWindow"
+msgid "File 1"
+msgstr "Fichier 1"
+
+msgctxt "AppWindow"
+msgid "File 2"
+msgstr "Fichier 2"
+
+msgctxt "AppWindow"
+msgid "Gap (ms):"
+msgstr "Écart (ms) :"
+
+# --- CONVERT TAB ---
+msgctxt "AppWindow"
+msgid "Convert format"
+msgstr "Convertir le format"
+
+msgctxt "AppWindow"
+msgid "ASS to SRT"
+msgstr "ASS vers SRT"
+
+msgctxt "AppWindow"
+msgid "SUB to SRT"
+msgstr "SUB vers SRT"
+
+msgctxt "AppWindow"
+msgid "TXT to SRT"
+msgstr "TXT vers SRT"
+
+msgctxt "AppWindow"
+msgid "VTT to SRT"
+msgstr "VTT vers SRT"
+
+msgctxt "AppWindow"
+msgid "SRT to plain text"
+msgstr "SRT vers texte simple"
+
+msgctxt "AppWindow"
+msgid "Convert a complex ASS file into a simple SRT file."
+msgstr "Convertir un fichier ASS complexe en un fichier SRT simple."
+
+msgctxt "AppWindow"
+msgid "Keep styling (<b>, <i>, <u>)"
+msgstr "Conservez le style (<b>, <i>, <u>)"
+
+msgctxt "AppWindow"
+msgid "Convert a MicroDVD SUB file into a standard SRT file."
+msgstr "Convertir un fichier SUB MicroDVD en un fichier SRT standard."
+
+msgctxt "AppWindow"
+msgid "Original video FPS:"
+msgstr "IPS de la vidéo d'origine :"
+
+msgctxt "AppWindow"
+msgid "Convert a timed or frame-based TXT file into standard SRT file."
+msgstr "Convertir un fichier TXT temporel ou par IPS en un fichier SRT standard."
+
+msgctxt "AppWindow"
+msgid "Convert a WebVTT file into a standard SRT file."
+msgstr "Convertir un fichier WebVTT en un fichier SRT standard."
+
+msgctxt "AppWindow"
+msgid "Keep metadata"
+msgstr "Conserver les metadata"
+
+msgctxt "AppWindow"
+msgid "Convert standard SRT subtitles into a plain text document."
+msgstr "Convertir des sous-titres SRT standard en un document texte brut."
+
+msgctxt "AppWindow"
+msgid "Style option:"
+msgstr "Option de style :"
+
+msgctxt "AppWindow"
+msgid "Remove style"
+msgstr "Supprimer le style"
+
+msgctxt "AppWindow"
+msgid "Keep style"
+msgstr "Conservez le style"
+
+msgctxt "AppWindow"
+msgid "File format:"
+msgstr "Format de fichier :"
+
+msgctxt "AppWindow"
+msgid "Save as .txt"
+msgstr "Enregistrer sous .txt"
+
+msgctxt "AppWindow"
+msgid "Save as .rtf"
+msgstr "Enregistrer sous .rtf"
+
+# --- CLEAN TAB ---
+msgctxt "AppWindow"
+msgid "Clean file"
+msgstr "Nettoyer le fichier"
+
+msgctxt "AppWindow"
+msgid "Style"
+msgstr "Style"
+
+msgctxt "AppWindow"
+msgid "Metadata"
+msgstr "Metadata"
+
+msgctxt "AppWindow"
+msgid "SDH"
+msgstr "SME"
+
+msgctxt "AppWindow"
+msgid "Lyrics"
+msgstr "Paroles"
+
+# --- STYLE ---
+msgctxt "AppWindow"
+msgid "Remove all style from subtitles."
+msgstr "Supprimer tout style des sous-titres."
+
+# --- METADATA ---
+msgctxt "AppWindow"
+msgid "Remove all metadata from subtitles."
+msgstr "Supprimer toutes les metadata des sous-titres."
+
+msgctxt "AppWindow"
+msgid "(Between parentheses)"
+msgstr "(Entre parenthèses)"
+
+msgctxt "AppWindow"
+msgid "[Between brackets]"
+msgstr "[Entre crochets]"
+
+msgctxt "AppWindow"
+msgid "Both"
+msgstr "L'un & l'autre"
+
+# --- SDH ---
+msgctxt "AppWindow"
+msgid "Remove all non-speech auditory informations\nfrom Deaf and Hard-of-Hearing (SDH) subtitles."
+msgstr "Supprimer toutes les informations auditives non vocales\ndes sous-titres pour sourds et malentendants (SME)."
+
+# --- LYRICS ---
+msgctxt "AppWindow"
+msgid "Remove all song lyrics containing the following symbols:"
+msgstr "Supprimez toutes les paroles de chansons avec les symboles suivants :"
+
+msgctxt "AppWindow"
+msgid "Notes only (♪ / ♫)"
+msgstr "Notes uniquement (♪ / ♫)"
+
+msgctxt "AppWindow"
+msgid "Tags only (#)"
+msgstr "Tags uniquement (#)"

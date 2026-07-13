@@ -1,176 +1,226 @@
-import { Button, VerticalBox, LineEdit, ComboBox, GroupBox, HorizontalBox } from "std-widgets.slint";
+import {LineEdit, ComboBox, GroupBox, VerticalBox, HorizontalBox, ScrollView, CheckBox, Button} from "std-widgets.slint";
+import {Theme, BlueButton, AppTitle, LabelText, MutedText, ReadOnlyBox, NavButton, ClassicBlueLink, BasicText, BlueBoldText, SectionTitle, StatusText, ResultText, IconEmoji, CustomButton, SelectButton, CustomLineEdit, CustomCheckBox, CustomRadioButton, CustomComboBox, LangSelectorBox, TabButton } from "ui/theme.slint";
+import { AppState } from "ui/state.slint";
+import "../assets/arial.ttf"; import "../assets/arialbd.ttf"; import "../assets/ariblk.ttf";
 
-// Style pour un bouton bleu fixe
-component BlueButton inherits Rectangle {
-    in-out property <string> text;
-    callback clicked <=> touch.clicked;
-    
-    width: 150px;
-    height: 50px;
-    background: touch.pressed ? #0D47A1 : touch.has-hover ? #1565C0 : #3873d5;
-    border-radius: 4px;
-    
-    Text {
-        text: root.text;
-        color: white;
-        font-weight: 700;
-    }
-    
-    touch := TouchArea { mouse-cursor: pointer; }
-}
 
+export { Theme } from "ui/theme.slint";
 export component AppWindow inherits Window {
-    title: "Subtitles Toolbox mini";
-    preferred-width: 550px; 
-    preferred-height: 850px;
-    background: #f5f5f5;
-    
-    // Callbacks vers Rust
-    callback process_clicked(string, string, string, string, string, string);
-    callback open_file1_clicked();
-    callback open_file2_clicked();
+    icon: @image-url("../assets/app-logo.png");
+    callback language_changed_in_ui(string);
+    default-font-family: "Arial";
+    title: "Subtitles Toolbox mini"; preferred-width: 1024px; preferred-height: 576px; min-width: 720px; background: Theme.background;
+    callback save_settings(); callback process_clicked(string, string, string, string, string, string, bool, bool, bool, bool, string, int, int, int, int, int, int);
+    callback open_extlink(); callback open_file1_clicked(int, int); callback open_file2_clicked();
+    callback prev_sub_a_clicked(); callback next_sub_a_clicked();
+    callback prev_sub_b_clicked(); callback next_sub_b_clicked();
+    callback conflict_resolved(string); callback pick_custom_folder();
+    callback prepare_settings(); callback cancel_settings();
+    in-out property <bool> show_info: false; in-out property <bool> show_settings: false; in-out property <bool> show_conflict: false;
+    in-out property <int> active_tab: 0;
+    in-out property <int> function_index: 0; in-out property <int> convert_index: 0; in-out property <int> clean_index: 0;
+    in-out property <int> s_save_mode: 0; in-out property <string> s_custom_path: "";
+    in-out property <string> s_lang: "en"; in-out property <string> tmp_lang;
+    in-out property <string> status_text: @tr("No file selected"); in-out property <string> file1_path: "";
+    in-out property <string> file2_path: ""; in-out property <string> file2_status: @tr("No second file selected");
+    in-out property <string> final_result_message: ""; in-out property <string> offset_val: "+2.0"; in-out property <string> default_shift_seconds: "+02.0";
+    in-out property <string> resync_idx_a: "1"; in-out property <string> resync_time_a: "00:00:00,000";
+    in-out property <string> resync_idx_b: "1"; in-out property <string> resync_time_b: "00:00:00,000";
+    in-out property <string> resync_text_a: ""; in-out property <string> resync_text_b: "";
+    in-out property <bool> shift_mode_hms: false; in-out property <bool> prevent_overlap: true; in-out property <bool> keep_duration: true;
+    in-out property <bool> m_start: false; in-out property <bool> m_dur: false; in-out property <string> m_gap: "010";
+    in-out property <bool> fav_f1: true; in-out property <bool> fav_f2: false;
+    in-out property <int> fps_source_index: 0; in-out property <int> fps_target_index: 2;
+    in-out property <bool> mode_same: true; in-out property <bool> mode_ask: false; in-out property <bool> mode_custom: false;
+    in-out property <bool> tmp_dark; in-out property <string> tmp_offset; in-out property <string> tmp_gap; in-out property <int> tmp_save_mode; in-out property <string> tmp_custom_path;
+    in-out property <int> convert_fps_index: 2;
+    in-out property <bool> keep_vtt_meta: false; in-out property <bool> keep_styling: true;
+    in-out property <int> plain_style_mode: 1; in-out property <int> plain_format_mode: 1;
+    in-out property <int> clean_meta_mode: 2; in-out property <int> clean_lyrics_mode: 2;
 
-    // Propriétés d'état
-    in-out property <string> status_text: "No file selected";
-    in-out property <string> file1_path: "";
-    in-out property <string> file2_path: "";
-    in-out property <string> file2_status: "No second file selected";
-    
-    // Propriété pour le message final (avec support du retour à la ligne)
-    in-out property <string> final_result_message: "";
+    if (root.show_conflict) : Rectangle { width: 100%; height: 100%; background: #00000088; z: 100;
+        TouchArea { } Rectangle { background: Theme.surface; border-color: Theme.brand-blue; border-width: 2px; border-radius: 8px; width: 530px; height: 220px;
+            VerticalBox { padding: 30px; spacing: 20px; alignment: center;
+                BlueBoldText { text: @tr("File already exists"); }
+                BasicText { text: @tr("What would you like to do?"); }
+                HorizontalBox { padding-left: 0px;
+                    BlueButton { text: @tr("Overwrite"); clicked => { root.show_conflict = false; root.conflict_resolved("overwrite"); } }
+                    BlueButton { text: @tr("Rename"); clicked => { root.show_conflict = false; root.conflict_resolved("rename"); } }
+                    CustomButton { text: @tr("Cancel"); clicked => { root.show_conflict = false; root.conflict_resolved("cancel"); } }
+    } } } }
+    if (root.show_info) : Rectangle { width: 100%; height: 100%; background: #00000088; z: 100;
+        TouchArea { } Rectangle { background: Theme.surface; border-color: Theme.brand-blue; border-width: 2px; border-radius: 8px; width: 400px; height: 250px;
+            VerticalBox { padding: 20px;
+                BlueBoldText { text: @tr("Informations"); horizontal-alignment: center; }
+                BasicText { text: "Subtitles Toolbox mini 1.0.1\n©MacBoot Prod 2026\n"; horizontal-alignment: center; }
+            HorizontalBox { padding-top: -40px; alignment: center;
+                ClassicBlueLink { text: @tr("SubtitlesToolboxMini on Github.com"); clicked => { root.open_extlink(); } } }
+            HorizontalBox { alignment: center;
+                CustomButton { text: @tr("Close");  width: 100px; height: 35px; clicked => { root.show_info = false; } } }
+    } } }
+        if (root.show_settings) : Rectangle { width: 100%; height: 100%; background: #00000088; z: 100;
+        TouchArea { } Rectangle { background: Theme.surface; border-color: Theme.brand-blue; border-width: 2px; border-radius: 8px; width: 520px; height: 500px; y: 20px;
+            VerticalBox { padding: 20px; spacing: 12px; alignment: start;
+                BlueBoldText { text: @tr("Settings"); horizontal-alignment: center; width: 100%; }
+                HorizontalBox { spacing: 10px; alignment: start; LabelText { text: @tr("Language:"); width: 250px; }
+                    LangSelectorBox { 
+    width: 150px; 
+    model: AppState.available_languages; 
+    current-value: AppState.available_languages[AppState.tmp_lang_index]; 
+    selected(val) => { 
+        root.language_changed_in_ui(val); 
+    }
+}
 
-    // Propriétés de saisie
-    in-out property <string> offset_val: "0.0";
-    in-out property <string> resync_idx_a: "1";
-    in-out property <string> resync_time_a: "00:00:00,000";
-    in-out property <string> resync_idx_b: "1";
-    in-out property <string> resync_time_b: "00:00:00,000";
-
-    VerticalBox {
-        padding: 30px; spacing: 15px;
-        
-        Text { 
-            text: "Subtitles Toolbox mini"; 
-            font-size: 28px; 
-            font-weight: 800; 
-            horizontal-alignment: center; 
-            color: #3873d5; 
-        }
-
-        GroupBox {
-            title: "Files Selection";
-            VerticalBox {
-                spacing: 10px;
-                // Bouton Charger Fichier 1 (Largeur fixe 150px)
-                HorizontalBox {
-                    alignment: center;
-                    Button { 
-                        text: "📁 Load File"; 
-                        width: 150px;
-                        clicked => { root.open_file1_clicked() } 
-                    }
+}
+                CustomCheckBox { text: @tr("Dark Mode"); checked <=> root.tmp_dark; }
+                HorizontalBox { spacing: 10px; LabelText { text: @tr("Shift default (SS.ms):"); width: 250px; } CustomLineEdit { text <=> root.tmp_offset; width: 100px; } }
+                HorizontalBox { spacing: 10px; LabelText { text: @tr("Merge gap (ms):"); width: 250px; } CustomLineEdit { text <=> root.tmp_gap; width: 40px; } }
+                SectionTitle { text: @tr("Output Directory:"); }
+                HorizontalBox { alignment: center;
+                    CustomRadioButton { text: @tr("Same as File 1"); checked: root.tmp_save_mode == 0; toggled => { root.tmp_save_mode = 0; } ; width: 33%;}
+                    CustomRadioButton { text: @tr("Always ask"); checked: root.tmp_save_mode == 1; toggled => { root.tmp_save_mode = 1; } ; width: 33%;} 
+                    CustomRadioButton { text: @tr("Custom:"); checked: root.tmp_save_mode == 2; toggled => { root.tmp_save_mode = 2; } ; width: 33%;} }
+                HorizontalBox { spacing: 10px; alignment: start;
+                    CustomButton { text: "📁"; width: 32px; height: 32px; clicked => { root.pick_custom_folder(); root.tmp_save_mode = 2; } }
+                    CustomLineEdit { text <=> root.tmp_custom_path; enabled: root.tmp_save_mode == 2; width: 415px; } }
+                HorizontalBox { alignment: center; spacing: 20px; padding-top: 10px;
+                    BlueButton { text: @tr("Apply"); clicked => { root.s_lang = root.tmp_lang; Theme.is_dark = root.tmp_dark; root.default_shift_seconds = root.tmp_offset; root.offset_val = root.tmp_offset; root.m_gap = root.tmp_gap; root.s_save_mode = root.tmp_save_mode; root.s_custom_path = root.tmp_custom_path; root.save_settings(); root.show_settings = false; } }
+                    CustomButton { text: @tr("Cancel"); clicked => { root.show_settings = false; } } }
+            } }   }
+    ScrollView { viewport-width: root.width;
+        VerticalBox { padding: 30px; padding-top: 10px; spacing: 20px; alignment: start;
+            HorizontalBox { width: root.width - 60px; padding-bottom: 10px; 
+                HorizontalBox { spacing: 20px; alignment: start;
+                    VerticalBox { alignment: center; Image { source: @image-url("../assets/app-logo.png"); width: 24px; height: 24px; } }
+                    VerticalBox { alignment: center; AppTitle { text: "Subtitles Toolbox mini"; } }
                 }
-                
-                Text { 
-                    text: root.status_text; 
-                    horizontal-alignment: center; 
-                    // Rouge si vide, Vert si chargé
-                    color: root.file1_path == "" ? #d32f2f : #388e3c; 
-                    font-size: 12px; 
+                Rectangle { } 
+                HorizontalBox { padding-top: 30px; alignment: end; spacing: 20px;
+                    IconEmoji { text: "ℹ️"; TouchArea { clicked => { root.show_info = true; } } }
+                    IconEmoji { text: "⚙️"; TouchArea { clicked => { root.prepare_settings(); root.show_settings = true; } } }
+            }  }
+// --- NAVIGATION TABS  ---
+                HorizontalBox { padding: 0; spacing: 4px; alignment: center;
+                    TabButton { text: @tr("Functions"); active: root.active_tab == 0; clicked => { root.active_tab = 0; root.function_index = 0; root.convert_index = 0; root.clean_index = 0; root.file1_path = ""; root.file2_path = ""; root.status_text = @tr("No file selected"); root.file2_status = @tr("No second file selected"); root.final_result_message = ""; } }
+                    TabButton { text: @tr("Convert"); active: root.active_tab == 1; clicked => { root.active_tab = 1; root.function_index = 0; root.convert_index = 0; root.clean_index = 0; root.file1_path = ""; root.file2_path = ""; root.status_text = @tr("No file selected"); root.file2_status = @tr("No second file selected"); root.final_result_message = ""; } } 
+                    TabButton { text: @tr("Clean"); active: root.active_tab == 2; clicked => { root.active_tab = 2; root.function_index = 0; root.convert_index = 0; root.clean_index = 0; root.file1_path = ""; root.file2_path = ""; root.status_text = @tr("No file selected"); root.file2_status = @tr("No second file selected"); root.final_result_message = ""; } } 
                 }
-                
-                // Section conditionnelle pour le Merge
-                if (mode_selector.current-value == "Merge 2 files") : VerticalBox {
-                    spacing: 10px;
-                    HorizontalBox {
-                        alignment: center;
-                        Button { 
-                            text: "🔗 Load Second File"; 
-                            width: 150px;
-                            clicked => { root.open_file2_clicked() } 
-                        }
-                    }
-                    Text { 
-                        text: root.file2_status; 
-                        horizontal-alignment: center; 
-                        // Rouge si vide, Bleu #1976D2 si chargé
-                        color: root.file2_path == "" ? #d32f2f : #388e3c; 
-                        font-size: 12px; 
-                    }
-                }
-            }
-        }
+// MAIN CONTENT
+            VerticalLayout { width: 480px; padding-top: -20px; padding-bottom: 10px;
 
-        GroupBox {
-            title: "Functions";
-            VerticalBox {
-                spacing: 10px;
-                Text { text: "Select Function:"; font-weight: 700; }
-                mode_selector := ComboBox {
-                    model: ["Shift", "Re-synch", "Repair index", "Merge 2 files"];
-                    current-value: "Shift";
-                }
-                
-                if (mode_selector.current-value == "Shift") : VerticalBox {
-                    Text { text: "This will shift all subtitles (seconds):"; font-italic: true; }
-                    LineEdit { text <=> root.offset_val; }
-                }
-
-                if (mode_selector.current-value == "Re-synch") : VerticalBox {
-                    spacing: 10px;
-                    Text { text: "Target point A (Subtitle: Number & Time):"; font-weight: 600; }
-                    HorizontalBox {
-                        LineEdit { text <=> root.resync_idx_a; width: 60px; }
-                        LineEdit { text <=> root.resync_time_a; }
-                    }
-                    Text { text: "Target point B (Subtitle: Number & Time):"; font-weight: 600; }
-                    HorizontalBox {
-                        LineEdit { text <=> root.resync_idx_b; width: 60px; }
-                        LineEdit { text <=> root.resync_time_b; }
-                    }
-                }
-                
-                if (mode_selector.current-value == "Repair index") : Text {
-                    text: "This will re-index all subtitles numbers from 1 to N"; 
-                    font-italic: true;
-                }
-
-                if (mode_selector.current-value == "Merge 2 files") : Text {
-                    text: "This will add all subtitles from file 2 after last subtitle of file 1"; 
-                    font-italic: true;
-                }
-            }
-        }
-
-        Rectangle {} // Espaceur flexible
-
-        // Bouton bleu EXECUTE (Largeur fixe 150px)
-        HorizontalBox {
-            alignment: center;
-            BlueButton {
-                text: "EXECUTE ACTION"; 
-                clicked => { 
-                    root.final_result_message = "Processing...";
-                    root.process_clicked(
-                        root.offset_val, 
-                        mode_selector.current-value, 
-                        root.resync_time_a, 
-                        root.resync_time_b,
-                        root.resync_idx_a,
-                        root.resync_idx_b
-                    ) 
-                }
-            }
-        }
-
-        // Zone de résultat
-        Text {
-            text: root.final_result_message;
-            horizontal-alignment: center;
-            color: #388e3c;
-            font-weight: 700;
-            font-size: 14px;
-            wrap: word-wrap; // Permet le retour à la ligne
+                GroupBox { VerticalLayout { spacing: 15px; padding-top: 5px; padding-bottom: 0px;
+                    SectionTitle { text: @tr("File Selection"); }
+                    SelectButton { text: @tr("📁 Load File"); width: 200px; height: 35px; clicked => { root.open_file1_clicked(root.active_tab, root.convert_index) } }
+                    StatusText { text: root.status_text; color: root.file1_path == "" ? Theme.error : Theme.text-main; }
+                } }
+            // --- TAB 0 : FUNCTIONS ---
+                    if (root.active_tab == 0) : GroupBox { VerticalLayout { spacing: 15px; padding-top: 0px;
+                    SectionTitle { text: @tr("Functions"); }
+                    mode_selector := CustomComboBox { width: 200px; model: [@tr("Shift"), @tr("Re-sync"), @tr("Change Framerate"), @tr("Append 2 files"), @tr("Repair index"), @tr("Merge 2 files")]; current-value: @tr("Shift"); current-index <=> root.function_index; }
+                // --- FUNCTION - SHIFT ---
+                    if (root.function_index == 0) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Shift all subtitles timing (forward or backward)."); }
+                        CustomCheckBox { text: @tr("Use HH:MM:SS format"); checked <=> root.shift_mode_hms; toggled => { root.offset_val = root.shift_mode_hms ? "+00:01:23,456" : root.default_shift_seconds; } }
+                        MutedText { text: root.shift_mode_hms ? @tr("Enter HH:MM:SS,ms (positive or negative)") : @tr("Enter seconds SS.ms (positive or negative)"); }
+                        CustomLineEdit { text <=> root.offset_val; width: 150px; } }
+                // --- FUNCTION - RE-SYNC ---
+                    if (root.function_index == 1) : VerticalBox { spacing: 15px;
+                        MutedText { text: root.keep_duration ?
+                        (root.prevent_overlap ? @tr("Re-sync from point A to point B, preserving duration & avoiding overlaps.") : @tr("Re-sync from point A to point B, preserving duration.")) : (root.prevent_overlap ? @tr("Linear re-sync from point A to point B, avoiding overlaps.") : @tr("Linear re-sync from point A to point B.")); }
+                        HorizontalBox { spacing: 15px; CustomCheckBox { text: @tr("No overlap"); checked <=> root.prevent_overlap; } CustomCheckBox { text: @tr("Keep duration"); checked <=> root.keep_duration; } }
+                        VerticalBox { spacing: 5px; LabelText { text: @tr("Point A:"); } HorizontalBox { padding-left: 0px; padding-right: 5px; CustomLineEdit { text <=> root.resync_idx_a; width: 60px; } CustomLineEdit { text <=> root.resync_time_a; width: 120px; } NavButton { text: "<"; clicked => { root.prev_sub_a_clicked() } } NavButton { text: ">"; clicked => { root.next_sub_a_clicked() } } } ReadOnlyBox { text: root.resync_text_a; } }
+                        VerticalBox { spacing: 5px; LabelText { text: @tr("Point B:"); } HorizontalBox { padding-left: 0px; padding-right: 5px; CustomLineEdit { text <=> root.resync_idx_b; width: 60px; } CustomLineEdit { text <=> root.resync_time_b; width: 120px; } NavButton { text: "<"; clicked => { root.prev_sub_b_clicked() } } NavButton { text: ">"; clicked => { root.next_sub_b_clicked() } } } ReadOnlyBox { text: root.resync_text_b; } } }
+                // --- FUNCTION - CHANGE FRAMERATE ---
+                    if (root.function_index == 2) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Change all subtitles timing from\na source frame rate to a target frame rate."); }
+                        HorizontalBox { spacing: 15px; alignment: start;
+                            VerticalBox { spacing: 5px; LabelText { text: @tr("Source FPS:"); }
+                                CustomComboBox { width: 100px; model: ["23.976", "24", "25", "29.97", "30", "50", "59.94", "60"]; current-value: "23.976"; current-index <=> root.fps_source_index; } }
+                            VerticalBox { spacing: 5px; LabelText { text: @tr("Target FPS:"); }
+                                CustomComboBox { width: 100px; model: ["23.976", "24", "25", "29.97", "30", "50", "59.94", "60"]; current-value: "25"; current-index <=> root.fps_target_index; } } }
+                            }
+                // --- FUNCTION - APPEND 2 FILES ---
+                    if (root.function_index == 3) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Append all subtitles from file 2 at the very end of file 1"); }
+                        SelectButton { text: @tr("🔗 Load File 2"); width: 200px; height: 35px; clicked => { root.open_file2_clicked() } }
+                        StatusText { text: root.file2_status; color: root.file2_path == "" ? Theme.error : Theme.text-muted; }
+                        if (root.file2_path != "") : VerticalBox { spacing: 10px;
+                            LabelText { text: @tr("Connect file 2 at (target Index & Timing):"); }
+                            HorizontalBox { padding-left: 0px; padding-right: 5px; CustomLineEdit { text <=> root.resync_idx_b; enabled: false; width: 80px; } CustomLineEdit { text <=> root.offset_val; width: 150px; } }
+                            ReadOnlyBox { text: root.resync_text_b; } } }
+                // --- FUNCTION - REPAIR INDEX ---
+                    if (root.function_index == 4) : MutedText { text: @tr("Re-index subtitles from 1 to N"); }
+                // --- FUNCTION - MERGE 2 FILES ---
+                    if (root.function_index == 5) : VerticalBox { spacing: 12px;
+                        MutedText { text: root.m_start || root.m_dur ? @tr("Merge file 1 with file 2, favoring {0} {1}", (root.fav_f2 ? @tr("file 2,") : @tr("file 1,")), (root.m_start ? @tr("\navoiding start overlap, with a tolerance gap of {0} ms.", root.m_gap) : @tr("\navoiding duration overlap, with a tolerance gap of {0} ms.", root.m_gap))) : @tr("Merge file 1 with file 2."); }
+                    SelectButton { text: @tr("🔗 Load File 2"); width: 200px; height: 35px; clicked => { root.open_file2_clicked() } }
+                    StatusText { text: root.file2_status; color: root.file2_path == "" ? Theme.error : Theme.text-main; }
+                        if (root.file2_path != "") : VerticalBox { spacing: 10px;
+                            HorizontalBox { spacing: 15px;
+                            CustomRadioButton { text: @tr("Simple merge"); checked: !root.m_start && !root.m_dur; toggled => { root.m_start = false; root.m_dur = false; } }
+                            CustomRadioButton { text: @tr("Avoid start overlap"); checked: root.m_start; toggled => { root.m_start = true; root.m_dur = false; } } 
+                            CustomRadioButton { text: @tr("Avoid duration overlap"); checked: root.m_dur; toggled => { root.m_dur = true; root.m_start = false; } } }
+                        if (root.m_start || root.m_dur) : VerticalBox { spacing: 10px;
+                            HorizontalBox { spacing: 15px; alignment: start; LabelText { text: @tr("Favor:"); }
+                            CustomRadioButton { text: @tr("File 1"); checked: root.fav_f1; toggled => { root.fav_f1 = true; root.fav_f2 = false; } }
+                            CustomRadioButton { text: @tr("File 2"); checked: root.fav_f2; toggled => { root.fav_f2 = true; root.fav_f1 = false; } } }
+                            HorizontalBox { spacing: 5px; alignment: start; LabelText { text: @tr("Gap (ms):"); } CustomLineEdit { text <=> root.m_gap; width: 70px; } }
+                    } } } } } }
+            // --- TAB 1 : CONVERT ---
+                if (root.active_tab == 1) : GroupBox { VerticalLayout { spacing: 15px; padding-top: -30px;
+                    SectionTitle { text: @tr("Convert format"); }
+                    CustomComboBox { width: 200px; model: [@tr("ASS to SRT"), @tr("SUB to SRT"), @tr("TXT to SRT"), @tr("VTT to SRT"), @tr("SRT to plain text")]; current-value: @tr("ASS to SRT"); current-index <=> root.convert_index; }
+                    if (root.convert_index == 0) : VerticalBox { spacing: 10px; MutedText { text: @tr("Convert a complex ASS file into a simple SRT file."); }
+                        CustomCheckBox { text: @tr("Keep styling (<b>, <i>, <u>)"); checked <=> root.keep_styling; } }
+                    if (root.convert_index == 1) : VerticalBox { spacing: 10px; MutedText { text: @tr("Convert a MicroDVD SUB file into a standard SRT file."); }
+                        CustomCheckBox { text: @tr("Keep styling (<b>, <i>, <u>)"); checked <=> root.keep_styling; }
+                        HorizontalBox { spacing: 10px; alignment: start; LabelText { text: @tr("Original video FPS:"); } CustomComboBox { width: 100px; model: ["23.976", "24", "25", "29.97", "30", "50", "59.94", "60"]; current-value: "25"; current-index <=> root.convert_fps_index; } } }
+                    if (root.convert_index == 2) : VerticalBox { spacing: 10px; MutedText { text: @tr("Convert a timed or frame-based TXT file into standard SRT file."); }
+                        HorizontalBox { spacing: 10px; alignment: start; LabelText { text: @tr("Original video FPS:"); } CustomComboBox { width: 100px; model: ["23.976", "24", "25", "29.97", "30", "50", "59.94", "60"]; current-value: "25"; current-index <=> root.convert_fps_index; } } }
+                    if (root.convert_index == 3) : VerticalBox { spacing: 10px; MutedText { text: @tr("Convert a WebVTT file into a standard SRT file."); }
+                        CustomCheckBox { text: @tr("Keep metadata"); checked <=> root.keep_vtt_meta; } }
+                    if (root.convert_index == 4) : VerticalBox { padding: 0; spacing: 12px;
+                        MutedText { text: @tr("Convert standard SRT subtitles into a plain text document."); }
+                        HorizontalBox { padding: 0; spacing: 15px; alignment: start;
+                            LabelText { text: @tr("Style option:"); width: 120px; vertical-alignment: center; }
+                            CustomRadioButton { text: @tr("Remove style"); checked: root.plain_style_mode == 0; toggled => { root.plain_style_mode = 0; } }
+                            CustomRadioButton { text: @tr("Keep style"); checked: root.plain_style_mode == 1; toggled => { root.plain_style_mode = 1; } } }
+                        HorizontalBox { padding: 0; spacing: 15px; alignment: start;
+                            LabelText { text: @tr("File format:"); width: 120px; vertical-alignment: center; }
+                            CustomRadioButton { text: @tr("Save as .txt"); checked: root.plain_format_mode == 0; toggled => { root.plain_format_mode = 0; } }
+                            CustomRadioButton { text: @tr("Save as .rtf"); checked: root.plain_format_mode == 1; toggled => { root.plain_format_mode = 1; } } } }
+                } }
+            // --- TAB 2 : CLEAN ---
+                if (root.active_tab == 2) : GroupBox { VerticalLayout { spacing: 15px; padding-top: -30px;
+                    SectionTitle { text: @tr("Clean file"); }
+                    CustomComboBox { width: 200px; model: [@tr("Style"), @tr("Metadata"), @tr("SDH"), @tr("Lyrics")]; current-value: @tr("Style"); current-index <=> root.clean_index; }
+                    if (root.clean_index == 0) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Remove all style from subtitles."); } }
+                    if (root.clean_index == 1) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Remove all metadata from subtitles."); }
+                        HorizontalBox { spacing: 15px; alignment: start;
+                            CustomRadioButton { text: @tr("(Between parentheses)"); checked: root.clean_meta_mode == 0; toggled => { root.clean_meta_mode = 0; } }
+                            CustomRadioButton { text: @tr("[Between brackets]"); checked: root.clean_meta_mode == 1; toggled => { root.clean_meta_mode = 1; } }
+                            CustomRadioButton { text: @tr("Both"); checked: root.clean_meta_mode == 2; toggled => { root.clean_meta_mode = 2; } }
+                    } }
+                    if (root.clean_index == 2) : VerticalBox { spacing: 10px;
+                        MutedText { text: @tr("Remove all non-speech auditory informations\nfrom Deaf and Hard-of-Hearing (SDH) subtitles."); } }
+                    if (root.clean_index == 3) : VerticalBox { padding: 0; spacing: 10px;
+                        MutedText { text: @tr("Remove all song lyrics containing the following symbols:"); }
+                        HorizontalBox { padding: 0; spacing: 15px;
+                            CustomRadioButton { text: @tr("Notes only (♪ / ♫)"); checked: root.clean_lyrics_mode == 0; toggled => { root.clean_lyrics_mode = 0; } }
+                            CustomRadioButton { text: @tr("Tags only (#)"); checked: root.clean_lyrics_mode == 1; toggled => { root.clean_lyrics_mode = 1; } }
+                            CustomRadioButton { text: @tr("Both"); checked: root.clean_lyrics_mode == 2; toggled => { root.clean_lyrics_mode = 2; } } } }
+                } }
+// --- BUTTON - EXECUTE ACTION ---
+            VerticalBox { alignment: center; spacing: 15px; width: 100%;
+                HorizontalBox { alignment: center; main_execute_btn := BlueButton { text: @tr("EXECUTE ACTION"); clicked => { 
+                    root.final_result_message = @tr("Processing..."); 
+                    root.process_clicked(root.offset_val, root.active_tab == 0 ? ["Shift", "Re-sync", "Change_Framerate", "Append 2 files", "Repair index", "Merge 2 files"][root.function_index] : (root.active_tab == 1 ? ["Convert_ASS", "Convert_SUB", "Convert_TXT", "Convert_VTT", "Convert_PlainText"][root.convert_index] : ["Clean_style", "Clean_metadata", "Clean_SDH", "Clean_Lyrics"][root.clean_index]), root.resync_time_a, root.resync_time_b, root.resync_idx_a, root.resync_idx_b, root.prevent_overlap, root.keep_duration, root.keep_vtt_meta, root.keep_styling, ["23.976", "24", "25", "29.97", "30", "50", "59.94", "60"][root.convert_fps_index], root.clean_meta_mode, root.clean_lyrics_mode, root.fps_source_index, root.fps_target_index, root.plain_style_mode, root.plain_format_mode)
+                } } }
+                ResultText { text: root.final_result_message; } }
         }
     }
 }
+export { AppState }
