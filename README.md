@@ -1,5 +1,5 @@
 # Subtitles Toolbox mini
-A mini toolbox to fix timing issues in .srt subtitles
+A mini toolbox to fix timing issues and more in .srt subtitles
 
 Functions:
 - Shift
