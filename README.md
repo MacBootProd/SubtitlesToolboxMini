@@ -22,5 +22,7 @@ Clean file from:
 - SDH
 - Lyrics
 
-Download Windows & macOS installers for Subtitles Toolbox mini:
+
+Download Subtitles Toolbox mini installers for Windows & macOS:
 https://github.com/MacBootProd/SubtitlesToolboxMini/releases
+
