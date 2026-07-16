@@ -23,4 +23,4 @@ Clean file from:
 - Lyrics
 
 Download Windows & macOS installers for Subtitles Toolbox mini:
-https://github.com/MacBootProd/SubtitlesToolboxMini/releases/tag/Installer
+https://github.com/MacBootProd/SubtitlesToolboxMini/releases
